@@ -1,0 +1,735 @@
+// ========================
+// SEGUIMIENTO COMPONENT STYLES
+// ========================
+
+// Color Variables
+$primary-blue: #3b82f6;
+$secondary-blue: #2563eb;
+$success-green: #16a34a;
+$warning-yellow: #eab308;
+$danger-red: #dc2626;
+$brand-primary: #960e53;
+$brand-secondary: #b94645;
+$light-bg: #f3f4f6;
+$text-dark: #4b5563;
+$text-light: #6b7280;
+$white: #ffffff;
+$border-color: #e5e7eb;
+$header-dark: #8a154a;
+
+// Breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// ========================
+// CONTAINER & HEADER
+// ========================
+
+.seguimiento-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+  padding: 20px;
+  padding-bottom: 100px;
+
+  @media (max-width: $tablet) {
+    padding: 15px;
+  }
+}
+
+.seguimiento-header {
+  background: linear-gradient(135deg, $header-dark 0%, $brand-primary 100%);
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: $tablet) {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-title {
+  color: $white;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+
+  @media (max-width: $tablet) {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 1.5rem;
+  }
+}
+
+// ========================
+// SEARCH BAR
+// ========================
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+
+  @media (max-width: $tablet) {
+    max-width: 100%;
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  color: $text-dark;
+  background: $white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &::placeholder {
+    color: $text-light;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-light;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+// ========================
+// MAIN CONTENT
+// ========================
+
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: $white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: $tablet) {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 15px;
+    border-radius: 8px;
+  }
+}
+
+// ========================
+// REPORTS COUNT
+// ========================
+
+.reports-count {
+  font-size: 14px;
+  color: $text-light;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid $border-color;
+  font-weight: 500;
+
+  @media (max-width: $mobile) {
+    font-size: 13px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+}
+
+// ========================
+// REPORTS CONTAINER & CARDS
+// ========================
+
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: $tablet) {
+    gap: 15px;
+  }
+
+  @media (max-width: $mobile) {
+    gap: 12px;
+  }
+}
+
+.report-card {
+  background: $white;
+  border: 1px solid $border-color;
+  border-left: 6px solid $primary-blue;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: $tablet) {
+    padding: 18px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 15px;
+    border-radius: 8px;
+    border-left-width: 4px;
+  }
+}
+
+// ========================
+// CARD HEADER
+// ========================
+
+.report-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.report-id-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.report-id {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-light;
+  background: $light-bg;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0 0 8px currentColor;
+  opacity: 0.8;
+}
+
+.btn-toggle {
+  background: none;
+  border: none;
+  color: $text-dark;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: $light-bg;
+    color: $primary-blue;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ========================
+// REPORT TITLE
+// ========================
+
+.report-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 12px;
+  margin-top: 8px;
+  line-height: 1.4;
+
+  @media (max-width: $mobile) {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+}
+
+// ========================
+// REPORT META
+// ========================
+
+.report-meta {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: $mobile) {
+    gap: 12px;
+  }
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $text-light;
+
+  i {
+    color: $primary-blue;
+    font-size: 12px;
+  }
+}
+
+// ========================
+// STATUS BADGE
+// ========================
+
+.report-status-badge {
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-dark;
+  letter-spacing: 0.3px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ========================
+// REPORT DETAILS
+// ========================
+
+.report-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $border-color;
+  animation: slideDown 0.3s ease;
+
+  @media (max-width: $mobile) {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+}
+
+.detail-section {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.detail-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-dark;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.detail-text {
+  font-size: 14px;
+  color: $text-light;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// Details Grid
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: $tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: $mobile) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: $text-light;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: $text-dark;
+  font-weight: 500;
+}
+
+.priority-badge {
+  display: inline-block;
+  color: $white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+  text-transform: capitalize;
+}
+
+// ========================
+// REPORT ACTIONS
+// ========================
+
+.report-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $border-color;
+  flex-wrap: wrap;
+  animation: slideDown 0.3s ease;
+
+  @media (max-width: $mobile) {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: $mobile) {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+}
+
+.btn-primary {
+  background: $brand-primary;
+  color: $white;
+
+  &:hover {
+    background: darken($brand-primary, 10%);
+  }
+}
+
+.btn-secondary {
+  background: $primary-blue;
+  color: $white;
+
+  &:hover {
+    background: $secondary-blue;
+  }
+}
+
+.btn-danger {
+  background: $danger-red;
+  color: $white;
+
+  &:hover {
+    background: darken($danger-red, 10%);
+  }
+}
+
+.btn-retry {
+  background: $primary-blue;
+  color: $white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+
+  &:hover {
+    background: $secondary-blue;
+    transform: translateY(-2px);
+  }
+}
+
+// ========================
+// EMPTY STATE
+// ========================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  i {
+    font-size: 48px;
+    color: $text-light;
+    opacity: 0.5;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 16px;
+    color: $text-light;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    margin-top: 0;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 40px 15px;
+
+    i {
+      font-size: 36px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+// ========================
+// LOADING & ERROR STATES
+// ========================
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: $white;
+  border-radius: 15px;
+  margin-bottom: 30px;
+
+  p {
+    font-size: 16px;
+    color: $text-dark;
+    margin-top: 16px;
+    font-weight: 500;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 40px 15px;
+    border-radius: 10px;
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid $light-bg;
+  border-top-color: $primary-blue;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-state {
+  border: 1px solid #fee2e2;
+  background: #fef2f2;
+
+  i {
+    font-size: 32px;
+    color: $danger-red;
+  }
+
+  p {
+    color: $danger-red;
+  }
+}
+
+// ========================
+// NAVIGATION BAR
+// ========================
+
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $white;
+  border-top: 1px solid $border-color;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+
+  @media (max-width: $tablet) {
+    display: none;
+  }
+}
+
+.nav-items {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 15px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+
+  @media (max-width: $desktop) {
+    gap: 20px;
+  }
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: $text-light;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+
+  i {
+    font-size: 18px;
+  }
+
+  &:hover {
+    color: $primary-blue;
+    background: $light-bg;
+  }
+
+  &.active {
+    color: $brand-primary;
+    border-bottom: 3px solid $brand-primary;
+
+    i {
+      color: $brand-primary;
+    }
+  }
+
+  .badge-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: $danger-red;
+    color: $white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
+  }
+}
+
+// ========================
+// MEDIA QUERIES ADJUSTMENT
+// ========================
+
+@media (max-width: $mobile) {
+  .seguimiento-container {
+    padding-bottom: 30px;
+  }
+
+  .main-content {
+    box-shadow: none;
+  }
+}

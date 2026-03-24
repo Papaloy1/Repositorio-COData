@@ -1,0 +1,378 @@
+$primary-color: #3b82f6;
+$primary-dark: #1e40af;
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$border-color: #e5e7eb;
+$background-light: #f9fafb;
+$white: #ffffff;
+
+// Responsive breakpoints
+$mobile: 768px;
+$tablet: 1024px;
+
+/* ============================================
+   HEADER STYLES
+   ============================================ */
+
+header.header {
+  background: $white;
+  border-bottom: 1px solid $border-color;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 70px;
+
+  @media (max-width: $mobile) {
+    padding: 0 0.75rem;
+    height: 60px;
+  }
+}
+
+/* ============================================
+   BRAND/LOGO
+   ============================================ */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  i {
+    font-size: 1.75rem;
+  }
+
+  span {
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+}
+
+/* ============================================
+   DESKTOP NAVIGATION
+   ============================================ */
+
+.nav-desktop {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  margin: 0 2rem;
+
+  @media (max-width: $mobile) {
+    display: none;
+  }
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: $text-dark;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+
+  @media (max-width: $tablet) {
+    padding: 0.5rem 0.75rem;
+
+    span {
+      display: none;
+    }
+  }
+}
+
+/* ============================================
+   HEADER ACTIONS (Right side)
+   ============================================ */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  @media (max-width: $mobile) {
+    gap: 1rem;
+  }
+}
+
+/* ============================================
+   USER MENU
+   ============================================ */
+
+.user-menu-container {
+  position: relative;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: $text-dark;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+
+  &.open {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+    color: $primary-color;
+  }
+
+  @media (max-width: $mobile) {
+    padding: 0.5rem;
+    border: none;
+
+    .user-info {
+      display: none;
+    }
+  }
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $primary-color;
+  color: $white;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
+  .user-name {
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 0.9rem;
+  }
+
+  .user-email {
+    font-size: 0.75rem;
+    color: $text-light;
+  }
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  color: $text-dark;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+
+  i {
+    width: 20px;
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: $background-light;
+    color: $primary-color;
+  }
+
+  &.logout {
+    color: #dc2626;
+
+    &:hover {
+      background: rgba(220, 38, 38, 0.1);
+    }
+  }
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid $border-color;
+}
+
+/* ============================================
+   MOBILE MENU TOGGLE
+   ============================================ */
+
+.menu-toggle-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+
+  @media (max-width: $mobile) {
+    display: flex;
+  }
+
+  span {
+    width: 24px;
+    height: 2.5px;
+    background: $text-dark;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  &.open {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+  }
+}
+
+/* ============================================
+   MOBILE NAVIGATION
+   ============================================ */
+
+.nav-mobile {
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: $background-light;
+  border-bottom: 1px solid $border-color;
+
+  @media (max-width: $mobile) {
+    display: block;
+
+    &.open {
+      max-height: 500px;
+    }
+  }
+}
+
+.mobile-nav-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: $text-dark;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+
+  i {
+    font-size: 1.25rem;
+    width: 24px;
+  }
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    color: $primary-color;
+  }
+
+  &.active {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    border-left-color: $primary-color;
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: $tablet) {
+  .nav-item {
+    span {
+      display: none;
+    }
+  }
+
+  .header-container {
+    gap: 0.5rem;
+  }
+}

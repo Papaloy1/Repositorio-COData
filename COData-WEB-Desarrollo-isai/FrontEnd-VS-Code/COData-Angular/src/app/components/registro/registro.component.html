@@ -1,0 +1,290 @@
+<div class="registro-container">
+  <!-- Header -->
+  <div class="registro-header">
+    <h1>Crear Cuenta</h1>
+    <p>Únete a COData y comienza a reportar</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getStepProgress()"></div>
+    </div>
+    <div class="progress-steps">
+      <button
+        *ngFor="let step of ['personal', 'contact', 'security', 'confirm']"
+        class="progress-step"
+        [class.active]="currentStep === step"
+        [class.completed]="isStepCompleted(step)"
+        (click)="goToStep($any(step))"
+        [disabled]="!isStepCompleted(step) && step !== currentStep"
+      >
+        <span class="step-number">{{ ['personal', 'contact', 'security', 'confirm'].indexOf(step) + 1 }}</span>
+        <span class="step-label">{{ step | titlecase }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="submitSuccess" class="alert alert-success">
+    <i class="fa-solid fa-check-circle"></i>
+    <div>
+      <h3>¡Registro Exitoso!</h3>
+      <p>Tu cuenta ha sido creada. Redirigiendo al mapa...</p>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="submitError" class="alert alert-error">
+    <i class="fa-solid fa-exclamation-circle"></i>
+    <div>
+      <h3>Error</h3>
+      <p>{{ submitError }}</p>
+    </div>
+    <button (click)="submitError = null" class="close-btn">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="registroForm" class="registro-form">
+    <!-- Step 1: Personal Info -->
+    <div class="form-step" [class.active]="currentStep === 'personal'">
+      <h2 class="step-title">Información Personal</h2>
+      <p class="step-description">Cuéntanos tu nombre</p>
+
+      <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          class="form-input"
+          [class.error]="hasError('nombre')"
+          placeholder="Tu nombre"
+        />
+        <span *ngIf="hasError('nombre')" class="error-message">
+          {{ getErrorMessage('nombre') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="apellido">Apellido *</label>
+        <input
+          id="apellido"
+          type="text"
+          formControlName="apellido"
+          class="form-input"
+          [class.error]="hasError('apellido')"
+          placeholder="Tu apellido"
+        />
+        <span *ngIf="hasError('apellido')" class="error-message">
+          {{ getErrorMessage('apellido') }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Step 2: Contact Info -->
+    <div class="form-step" [class.active]="currentStep === 'contact'">
+      <h2 class="step-title">Información de Contacto</h2>
+      <p class="step-description">Cómo podemos contactarte</p>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-input"
+          [class.error]="hasError('email')"
+          placeholder="tu@email.com"
+        />
+        <span *ngIf="hasError('email')" class="error-message">
+          {{ getErrorMessage('email') }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="teléfono">Teléfono (Opcional)</label>
+        <input
+          id="teléfono"
+          type="tel"
+          formControlName="teléfono"
+          class="form-input"
+          [class.error]="hasError('teléfono')"
+          placeholder="+1 (555) 000-0000"
+        />
+        <span *ngIf="hasError('teléfono')" class="error-message">
+          {{ getErrorMessage('teléfono') }}
+        </span>
+        <p class="field-hint">Formato: +1 (555) 000-0000</p>
+      </div>
+    </div>
+
+    <!-- Step 3: Security -->
+    <div class="form-step" [class.active]="currentStep === 'security'">
+      <h2 class="step-title">Seguridad</h2>
+      <p class="step-description">Crea una contraseña segura</p>
+
+      <div class="form-group">
+        <label for="contraseña">Contraseña *</label>
+        <div class="password-input-wrapper">
+          <input
+            id="contraseña"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="contraseña"
+            class="form-input"
+            [class.error]="hasError('contraseña')"
+            placeholder="Mínimo 6 caracteres"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            [title]="showPassword ? 'Ocultar' : 'Mostrar'"
+          >
+            <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+          </button>
+        </div>
+        <span *ngIf="hasError('contraseña')" class="error-message">
+          {{ getErrorMessage('contraseña') }}
+        </span>
+
+        <!-- Password Strength Indicator -->
+        <div *ngIf="registroForm.get('contraseña')?.value" class="password-strength">
+          <div class="strength-label">
+            <span>Seguridad:</span>
+            <strong [style.color]="getPasswordStrengthColor()">
+              {{ getPasswordStrengthLabel() }}
+            </strong>
+          </div>
+          <div class="strength-bar-container">
+            <div
+              class="strength-bar"
+              [style.width.%]="passwordStrength"
+              [style.backgroundColor]="getPasswordStrengthColor()"
+            ></div>
+          </div>
+          <p class="strength-hint">
+            Usa mayúsculas, minúsculas, números y caracteres especiales para mayor seguridad.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmarContraseña">Confirmar Contraseña *</label>
+        <div class="password-input-wrapper">
+          <input
+            id="confirmarContraseña"
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmarContraseña"
+            class="form-input"
+            [class.error]="hasError('confirmarContraseña') || registroForm.hasError('passwordMismatch')"
+            placeholder="Repite tu contraseña"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="toggleConfirmPasswordVisibility()"
+            [title]="showConfirmPassword ? 'Ocultar' : 'Mostrar'"
+          >
+            <i [class]="showConfirmPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+          </button>
+        </div>
+        <span *ngIf="hasError('confirmarContraseña')" class="error-message">
+          {{ getErrorMessage('confirmarContraseña') }}
+        </span>
+        <span *ngIf="registroForm.hasError('passwordMismatch') && registroForm.get('contraseña')?.valid && registroForm.get('confirmarContraseña')?.valid"
+          class="error-message">
+          Las contraseñas no coinciden
+        </span>
+      </div>
+    </div>
+
+    <!-- Step 4: Confirmation -->
+    <div class="form-step" [class.active]="currentStep === 'confirm'">
+      <h2 class="step-title">Términos y Condiciones</h2>
+      <p class="step-description">Por favor revisa y acepta nuestros términos</p>
+
+      <div class="terms-box">
+        <h3>Términos de Servicio de COData</h3>
+        <p>
+          Al crear una cuenta, aceptas nuestros términos de servicio y política de privacidad.
+          Nos comprometemos a proteger tu información y usarla solo para mejorar el servicio...
+        </p>
+        <p>
+          COData es una plataforma de reportes municipales diseñada para mejorar la comunicación
+          entre ciudadanos y entidades locales. Tu participación es voluntaria y valiosa.
+        </p>
+      </div>
+
+      <div class="form-group checkbox">
+        <input
+          id="agreeToTerms"
+          type="checkbox"
+          formControlName="agreeToTerms"
+          [(ngModel)]="agreeToTerms"
+          ngModelOptions="{ standalone: true }"
+          class="checkbox-input"
+        />
+        <label for="agreeToTerms" class="checkbox-label">
+          Acepto los <a href="#" target="_blank">términos y condiciones</a> y la
+          <a href="#" target="_blank">política de privacidad</a> *
+        </label>
+      </div>
+
+      <span *ngIf="hasError('agreeToTerms')" class="error-message">
+        Debes aceptar los términos y condiciones para continuar
+      </span>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goToStep('personal')"
+        *ngIf="currentStep !== 'personal'"
+      >
+        <i class="fa-solid fa-arrow-left"></i>
+        Atrás
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="goToStep($any(currentStep === 'personal' ? 'contact' : currentStep === 'contact' ? 'security' : 'confirm'))"
+        *ngIf="currentStep !== 'confirm'"
+        [disabled]="!isStepValid(currentStep) || isLoading"
+      >
+        Siguiente
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-success"
+        (click)="submitRegistro()"
+        *ngIf="currentStep === 'confirm'"
+        [disabled]="!registroForm.valid || isLoading"
+      >
+        <span *ngIf="!isLoading">
+          <i class="fa-solid fa-check"></i>
+          Crear Cuenta
+        </span>
+        <span *ngIf="isLoading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Registrando...
+        </span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Sign In Link -->
+  <div class="auth-footer">
+    <p>
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </div>
+</div>

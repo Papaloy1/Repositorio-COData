@@ -1,0 +1,87 @@
+<header class="header">
+  <div class="header-container">
+    <!-- Logo/Brand -->
+    <div class="brand">
+      <i class="fa-solid fa-map-pin"></i>
+      <span>COData</span>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="nav-desktop">
+      <a
+        *ngFor="let item of menuItems"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="nav-item"
+        (click)="onNavigation()"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <!-- Right side - User menu & Mobile toggle -->
+    <div class="header-actions">
+      <!-- User Menu -->
+      <div class="user-menu-container">
+        <button class="user-button" (click)="toggleUserMenu()" [class.open]="isUserMenuOpen">
+          <div class="user-avatar">
+            {{ getInitials() }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ usuarioActual?.nombre || 'Usuario' }}</span>
+            <span class="user-email">{{ usuarioActual?.email || 'No autenticado' }}</span>
+          </div>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+
+        <!-- User Dropdown Menu -->
+        <div *ngIf="isUserMenuOpen" class="user-dropdown">
+          <a routerLink="/perfil" class="dropdown-item" (click)="closeMenus()">
+            <i class="fa-solid fa-user"></i>
+            <span>Mi Perfil</span>
+          </a>
+          <a routerLink="/configuracion" class="dropdown-item" (click)="closeMenus()">
+            <i class="fa-solid fa-gear"></i>
+            <span>Configuración</span>
+          </a>
+          <hr class="dropdown-divider" />
+          <button class="dropdown-item logout" type="button" (click)="logout()">
+            <i class="fa-solid fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        class="menu-toggle-mobile"
+        (click)="toggleMenu()"
+        [class.open]="isMenuOpen"
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation (Slide-out) -->
+  <div class="nav-mobile" [class.open]="isMenuOpen">
+    <nav class="mobile-nav-list">
+      <a
+        *ngFor="let item of menuItems"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="mobile-nav-item"
+        (click)="onNavigation()"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,188 @@
+<div class="seguimiento-container">
+  <!-- Header with Search -->
+  <div class="seguimiento-header">
+    <div class="header-content">
+      <h1 class="header-title">Seguimiento de Reportes</h1>
+      <form [formGroup]="searchForm" class="search-container">
+        <input
+          type="text"
+          formControlName="searchInput"
+          placeholder="Buscar reporte por título o descripción..."
+          class="search-input"
+        />
+        <i class="fas fa-magnifying-glass search-icon"></i>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando reportes...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ error }}</p>
+    <button (click)="loadReportes()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error" class="main-content">
+    <!-- Reports Count -->
+    <div class="reports-count">
+      <span>{{ filteredReportes.length }} reporte{{ filteredReportes.length !== 1 ? 's' : '' }} encontrado{{
+        filteredReportes.length !== 1 ? 's' : ''
+      }}</span>
+    </div>
+
+    <!-- Reports Cards Container -->
+    <div class="reports-container">
+      <!-- Empty State -->
+      <div *ngIf="filteredReportes.length === 0" class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <p>No se encontraron reportes</p>
+        <button (click)="scrollToTop(); searchForm.reset()" class="btn-primary">
+          Ver todos los reportes
+        </button>
+      </div>
+
+      <!-- Report Cards -->
+      <div *ngFor="let reporte of filteredReportes; let i = index" class="report-card" [style.border-left-color]="getStatusConfig(reporte.estado).borderColor">
+        <!-- Card Header -->
+        <div class="report-card-header">
+          <div class="report-id-status">
+            <span class="report-id">#{{ reporte.reporteId }}</span>
+            <span
+              class="status-dot"
+              [style.background-color]="getStatusConfig(reporte.estado).borderColor"
+              [title]="getStatusConfig(reporte.estado).label"
+            ></span>
+          </div>
+          <button
+            (click)="toggleCard(i)"
+            class="btn-toggle"
+            [attr.aria-label]="isCardExpanded(i) ? 'Contraer' : 'Expandir'"
+          >
+            <i class="fas" [class]="isCardExpanded(i) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </button>
+        </div>
+
+        <!-- Report Title -->
+        <h3 class="report-title">{{ reporte.titulo }}</h3>
+
+        <!-- Report Meta Info (Always Visible) -->
+        <div class="report-meta">
+          <div class="meta-item">
+            <i class="fas fa-calendar-days"></i>
+            <span>{{ getDurationSinceCreation(reporte.fecha_Creacion) }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ reporte.fecha_Creacion | date: 'short' }}</span>
+          </div>
+        </div>
+
+        <!-- Status Badge (Expandable) -->
+        <div *ngIf="isCardExpanded(i)" class="report-status-badge">
+          <span
+            class="badge"
+            [style.background-color]="getStatusConfig(reporte.estado).color"
+            [style.border-left]="'4px solid ' + getStatusConfig(reporte.estado).borderColor"
+          >
+            {{ getStatusConfig(reporte.estado).label }}
+          </span>
+        </div>
+
+        <!-- Report Details (Expandable) -->
+        <div *ngIf="isCardExpanded(i)" class="report-details">
+          <!-- Description -->
+          <div class="detail-section">
+            <h4 class="detail-title">Descripción</h4>
+            <p class="detail-text">{{ reporte.descripcion }}</p>
+          </div>
+
+          <!-- Additional Details Grid -->
+          <div class="details-grid">
+            <!-- Priority -->
+            <div class="detail-item">
+              <span class="detail-label">Prioridad</span>
+              <span
+                class="priority-badge"
+                [style.background-color]="getPriorityColor(reporte.prioridad)"
+              >
+                {{ getPriorityLabel(reporte.prioridad) }}
+              </span>
+            </div>
+
+            <!-- Category -->
+            <div class="detail-item">
+              <span class="detail-label">Categoría</span>
+              <span class="detail-value">Categoría {{ reporte.categoriaId }}</span>
+            </div>
+
+            <!-- Location -->
+            <div class="detail-item">
+              <span class="detail-label">Ubicación</span>
+              <span class="detail-value">Ubicación {{ reporte.ubicacionId }}</span>
+            </div>
+
+            <!-- User ID -->
+            <div class="detail-item">
+              <span class="detail-label">Usuario ID</span>
+              <span class="detail-value">{{ reporte.usuarioId }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Actions (Expandable) -->
+        <div *ngIf="isCardExpanded(i)" class="report-actions">
+          <button (click)="updateReport(reporte.reporteId)" class="btn btn-primary">
+            <i class="fas fa-edit"></i>
+            Actualizar
+          </button>
+          <button (click)="viewOnMap(reporte.reporteId)" class="btn btn-secondary">
+            <i class="fas fa-map-location-dot"></i>
+            Ver en Mapa
+          </button>
+          <button (click)="deleteReport(reporte.reporteId)" class="btn btn-danger">
+            <i class="fas fa-trash"></i>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <div class="nav-items">
+      <a href="/principal" class="nav-item" title="Principal">
+        <i class="fas fa-house"></i>
+        <span>Principal</span>
+      </a>
+      <a href="/seguimiento" class="nav-item active" title="Seguimiento">
+        <i class="fas fa-chart-line"></i>
+        <span>Seguimiento</span>
+      </a>
+      <a href="/galeria" class="nav-item" title="Galería">
+        <i class="fas fa-camera"></i>
+        <span>Galería</span>
+      </a>
+      <a href="/mapa" class="nav-item" title="Mapa">
+        <i class="fas fa-map-location-dot"></i>
+        <span>Mapa</span>
+      </a>
+      <a href="/notificaciones" class="nav-item" title="Notificaciones">
+        <i class="fas fa-bell"></i>
+        <span>Notificaciones</span>
+        <span class="badge-count">3</span>
+      </a>
+      <a href="/perfil" class="nav-item" title="Perfil">
+        <i class="fas fa-user"></i>
+        <span>Perfil</span>
+      </a>
+    </div>
+  </nav>
+</div>

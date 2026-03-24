@@ -1,0 +1,405 @@
+<div class="reportes-container">
+  <!-- Header Section -->
+  <div class="reportes-header">
+    <div class="header-content">
+      <h1>Gestión de Reportes</h1>
+      <p class="subtitle">
+        Visualiza y gestiona todos los reportes de la plataforma
+      </p>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-value">{{ filteredReportes.length }}</span>
+        <span class="stat-label">Reportes filtrados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ reportes.length }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          placeholder="Buscar por título, descripción o usuario..."
+          formControlName="searchInput"
+          (input)="onSearchChange($event.target.value)"
+          class="search-input"
+        />
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-controls">
+        <!-- Category Filter -->
+        <div class="filter-group">
+          <label for="category-filter">Categoría:</label>
+          <select
+            id="category-filter"
+            (change)="onCategoryChange($event)"
+            class="filter-select"
+          >
+            <option value="">Todas las categorías</option>
+            <option *ngFor="let cat of categorias" [value]="cat.categoriaId">
+              {{ cat.nombreCategoria }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-group">
+          <label for="status-filter">Estado:</label>
+          <select
+            id="status-filter"
+            [value]="selectedStatus"
+            (change)="onStatusChange($event)"
+            class="filter-select"
+          >
+            <option *ngFor="let opt of statusOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Priority Filter -->
+        <div class="filter-group">
+          <label for="priority-filter">Prioridad:</label>
+          <select
+            id="priority-filter"
+            [value]="selectedPriority"
+            (change)="onPriorityChange($event)"
+            class="filter-select"
+          >
+            <option *ngFor="let opt of priorityOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Clear Filters Button -->
+        <button class="btn-clear-filters" (click)="clearFilters()" title="Limpiar filtros">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- View Controls and Sort -->
+    <div class="controls-row">
+      <div class="view-controls">
+        <label>Vista:</label>
+        <button
+          class="view-btn"
+          [class.active]="viewMode === 'grid'"
+          (click)="changeViewMode('grid')"
+          title="Vista de cuadrículas"
+        >
+          <i class="fas fa-th"></i>
+        </button>
+        <button
+          class="view-btn"
+          [class.active]="viewMode === 'list'"
+          (click)="changeViewMode('list')"
+          title="Vista de lista"
+        >
+          <i class="fas fa-list"></i>
+        </button>
+        <button
+          class="view-btn"
+          [class.active]="viewMode === 'table'"
+          (click)="changeViewMode('table')"
+          title="Vista de tabla"
+        >
+          <i class="fas fa-table"></i>
+        </button>
+      </div>
+
+      <div class="sort-controls">
+        <label for="sort-select">Ordenar por:</label>
+        <select
+          id="sort-select"
+          [value]="sortField"
+          (change)="onSortChange($event)"
+          class="sort-select"
+        >
+          <option *ngFor="let opt of sortOptions" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+        <button
+          class="btn-sort-direction"
+          (click)="toggleSortDirection()"
+          [title]="sortDirection === 'asc' ? 'Ordenar descendente' : 'Ordenar ascendente'"
+        >
+          <i class="fas" [class.fa-arrow-up]="sortDirection === 'asc'" [class.fa-arrow-down]="sortDirection === 'desc'"></i>
+        </button>
+      </div>
+
+      <div class="page-size-control">
+        <label>Mostrar:</label>
+        <select (change)="changePageSize($event)" class="page-size-select">
+          <option value="9">9 por página</option>
+          <option value="15">15 por página</option>
+          <option value="30">30 por página</option>
+          <option value="50">50 por página</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando reportes...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="loadReportes()">Reintentar</button>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && displayedReportes.length === 0" class="empty-container">
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>No hay reportes</h3>
+      <p>Intenta ajustar tus filtros de búsqueda</p>
+    </div>
+  </div>
+
+  <!-- Grid View -->
+  <div *ngIf="viewMode === 'grid' && !isLoading && displayedReportes.length > 0" class="reportes-grid">
+    <div
+      *ngFor="let reporte of displayedReportes"
+      class="reporte-card"
+      [class.expanded]="expandedCards.has(reporte.reporteId)"
+    >
+      <!-- Card Header -->
+      <div class="card-header" (click)="toggleCardExpand(reporte.reporteId)">
+        <div class="header-left">
+          <h3 class="card-title">{{ reporte.titulo }}</h3>
+          <div class="card-meta">
+            <span class="badge" [ngClass]="'badge-' + getStatusBadgeClass(reporte.estado)">
+              <i class="fas" [class]="getStatusConfig(reporte.estado).icon"></i>
+              {{ getStatusConfig(reporte.estado).label }}
+            </span>
+            <span
+              class="priority-badge"
+              [style.background-color]="getPriorityColor(reporte.prioridad)"
+            >
+              {{ reporte.prioridad }}
+            </span>
+          </div>
+        </div>
+        <div class="header-right">
+          <span class="time-ago">{{ getDurationSinceCreation(reporte.fecha_Creacion) }}</span>
+          <i class="fas fa-chevron-down toggle-icon"></i>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <p class="card-description">{{ reporte.descripcion }}</p>
+
+        <div class="card-details">
+          <div class="detail-row" *ngIf="reporte.usuarioNombre">
+            <span class="detail-label">Reportado por:</span>
+            <span class="detail-value">{{ reporte.usuarioNombre }}</span>
+          </div>
+          <div class="detail-row" *ngIf="reporte.categoriaNombre">
+            <span class="detail-label">Categoría:</span>
+            <span class="detail-value">{{ reporte.categoriaNombre }}</span>
+          </div>
+          <div class="detail-row" *ngIf="reporte.ubicacionDireccion">
+            <span class="detail-label">Ubicación:</span>
+            <span class="detail-value">{{ reporte.ubicacionDireccion }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Creado:</span>
+            <span class="detail-value">
+              {{ reporte.fecha_Creacion | date: 'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+          <div class="detail-row" *ngIf="reporte.fecha_Cierre">
+            <span class="detail-label">Cerrado:</span>
+            <span class="detail-value">
+              {{ reporte.fecha_Cierre | date: 'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="card-footer">
+        <button class="btn-action btn-view" (click)="viewReporteDetails(reporte.reporteId)" title="Ver detalles">
+          <i class="fas fa-eye"></i>
+          Ver
+        </button>
+        <button class="btn-action btn-edit" (click)="editReporte(reporte.reporteId)" title="Editar">
+          <i class="fas fa-edit"></i>
+          Editar
+        </button>
+        <button class="btn-action btn-delete" (click)="deleteReporte(reporte.reporteId)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="viewMode === 'list' && !isLoading && displayedReportes.length > 0" class="reportes-list">
+    <div
+      *ngFor="let reporte of displayedReportes"
+      class="reporte-list-item"
+      [class.selected]="selectedReporte?.reporteId === reporte.reporteId"
+      (click)="selectReporte(reporte)"
+    >
+      <div class="list-item-left">
+        <div class="list-item-header">
+          <h4 class="list-item-title">{{ reporte.titulo }}</h4>
+          <div class="list-item-badges">
+            <span class="badge" [ngClass]="'badge-' + getStatusBadgeClass(reporte.estado)">
+              {{ getStatusConfig(reporte.estado).label }}
+            </span>
+            <span
+              class="priority-badge"
+              [style.background-color]="getPriorityColor(reporte.prioridad)"
+            >
+              {{ reporte.prioridad }}
+            </span>
+          </div>
+        </div>
+        <p class="list-item-description">{{ reporte.descripcion }}</p>
+        <div class="list-item-meta">
+          <span *ngIf="reporte.usuarioNombre">
+            <i class="fas fa-user"></i> {{ reporte.usuarioNombre }}
+          </span>
+          <span *ngIf="reporte.ubicacionDireccion">
+            <i class="fas fa-map-marker-alt"></i> {{ reporte.ubicacionDireccion }}
+          </span>
+          <span>
+            <i class="fas fa-clock"></i> {{ getDurationSinceCreation(reporte.fecha_Creacion) }}
+          </span>
+        </div>
+      </div>
+      <div class="list-item-actions">
+        <button class="btn-icon" (click)="viewReporteDetails(reporte.reporteId); $event.stopPropagation()" title="Ver">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="btn-icon" (click)="editReporte(reporte.reporteId); $event.stopPropagation()" title="Editar">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon" (click)="deleteReporte(reporte.reporteId); $event.stopPropagation()" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div *ngIf="viewMode === 'table' && !isLoading && displayedReportes.length > 0" class="reportes-table-container">
+    <table class="reportes-table">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Prioridad</th>
+          <th>Reportado por</th>
+          <th>Ubicación</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reporte of displayedReportes" class="table-row">
+          <td class="cell-title">{{ reporte.titulo }}</td>
+          <td class="cell-description">{{ reporte.descripcion | slice: 0: 50 }}...</td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + getStatusBadgeClass(reporte.estado)">
+              {{ getStatusConfig(reporte.estado).label }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="priority-badge"
+              [style.background-color]="getPriorityColor(reporte.prioridad)"
+            >
+              {{ reporte.prioridad }}
+            </span>
+          </td>
+          <td>{{ reporte.usuarioNombre || '-' }}</td>
+          <td>{{ reporte.ubicacionDireccion || '-' }}</td>
+          <td class="cell-date">{{ reporte.fecha_Creacion | date: 'dd/MM/yyyy' }}</td>
+          <td class="cell-actions">
+            <button class="btn-icon" (click)="viewReporteDetails(reporte.reporteId)" title="Ver">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-icon" (click)="editReporte(reporte.reporteId)" title="Editar">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon" (click)="deleteReporte(reporte.reporteId)" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && pagination.totalPages > 1" class="pagination-section">
+    <div class="pagination-info">
+      Mostrando <strong>{{ pagination.pageSize }}</strong> de
+      <strong>{{ pagination.totalItems }}</strong> reportes
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        class="btn-pagination"
+        (click)="previousPage()"
+        [disabled]="pagination.currentPage === 1"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <button
+        *ngFor="let page of paginationArray"
+        class="btn-page"
+        [class.active]="pagination.currentPage === page"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        class="btn-pagination"
+        (click)="nextPage()"
+        [disabled]="pagination.currentPage === pagination.totalPages"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="pagination-goto">
+      <label>Ir a página:</label>
+      <input
+        type="number"
+        min="1"
+        [max]="pagination.totalPages"
+        [value]="pagination.currentPage"
+        (change)="goToPage($event)"
+        class="goto-input"
+      />
+    </div>
+  </div>
+</div>

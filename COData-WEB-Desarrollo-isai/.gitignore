@@ -1,0 +1,7 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/COData-WEB/v17
+/BackEnd-VS-C#/COData-Web_BackEnd/.vs/COData-Web_BackEnd
+/.vs
