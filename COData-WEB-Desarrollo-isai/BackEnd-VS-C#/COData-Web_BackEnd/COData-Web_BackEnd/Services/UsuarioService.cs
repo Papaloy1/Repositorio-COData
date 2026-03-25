@@ -16,15 +16,15 @@ namespace COData_Web_BackEnd.Services
         public Usuario Login(string email, string contrasenia)
         {
             Usuario usuario = null;
-            
+
             using SqlConnection conn = new SqlConnection(_connectionString);
-            // Asumimos que crearás un SP llamado 'sp_Usuario_Login'
             using SqlCommand cmd = new SqlCommand("sp_Usuario_Login", conn);
 
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Email", email);
             cmd.Parameters.AddWithValue("@Contraseña", contrasenia);
-            cmd.Parameters.AddWithValue("@teléfono", (object)usuario.Teléfono ?? DBNull.Value);
+
+            // ELIMINAMOS LA LÍNEA DEL TELÉFONO QUE HACÍA EXPLOTAR EL CÓDIGO
 
             conn.Open();
 
@@ -37,10 +37,7 @@ namespace COData_Web_BackEnd.Services
                     UsuarioId = Convert.ToInt32(reader["UsuarioId"]),
                     Nombre = reader["Nombre"].ToString(),
                     Email = reader["Email"].ToString(),
-                    // No devolvemos la contraseña al front por seguridad
                     FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
-                    
-
                 };
             }
 
@@ -111,8 +108,12 @@ namespace COData_Web_BackEnd.Services
 
             cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Email", usuario.Email ?? (object)DBNull.Value);
-            // Asegúrate de usar la propiedad real del modelo: 'Contraseña'
             cmd.Parameters.AddWithValue("@Contraseña", usuario.Contraseña ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@teléfono", usuario.Teléfono ?? (object)DBNull.Value);
+
+            // Opcional: Si tu procedimiento sp_Usuario_Insertar y tu modelo exigen el teléfono,
+            // descomenta la siguiente línea (asegurándote que 'Teléfono' exista en tu modelo C#).
+            // cmd.Parameters.AddWithValue("@teléfono", usuario.Teléfono ?? (object)DBNull.Value);
 
             conn.Open();
             cmd.ExecuteNonQuery();
