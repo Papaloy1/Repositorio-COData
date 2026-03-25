@@ -10,7 +10,7 @@ namespace COData_Web_BackEnd.Services
 
         public EvidenciasService(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
 
         public List<Evidencias> GetAllEvidencias()

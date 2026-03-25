@@ -10,7 +10,7 @@ namespace COData_Web_BackEnd.Services
 
         public CategoriasService(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
 
         public List<Categorias> GetAllCategorias()
