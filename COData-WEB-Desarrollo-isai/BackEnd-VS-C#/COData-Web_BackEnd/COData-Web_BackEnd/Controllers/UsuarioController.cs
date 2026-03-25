@@ -51,5 +51,31 @@ namespace COData_Web_BackEnd.Controllers
             _usuarioService.DeleteUsuario(id);
             return Ok();
         }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest login)
+        {
+            if (login == null || string.IsNullOrEmpty(login.Email))
+            {
+                return BadRequest(new { message = "Datos de acceso incompletos" });
+            }
+
+            // Llamamos al método Login que agregamos antes en el UsuarioService
+            var usuario = _usuarioService.Login(login.Email, login.Contrasenia);
+
+            if (usuario == null)
+            {
+                // Si el SP no devuelve nada, mandamos un error 401 (No autorizado)
+                return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
+            }
+
+            // Si todo está bien, devolvemos el usuario (sin la contraseña por seguridad)
+            return Ok(new
+            {
+                id = usuario.UsuarioId,
+                nombre = usuario.Nombre,
+                email = usuario.Email,
+                fecha = usuario.FechaRegistro
+            });
+        }
     }
 }

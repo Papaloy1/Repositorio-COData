@@ -8,5 +8,8 @@ namespace COData_Web_BackEnd.Services
         Usuario CreateUsuario(Usuario usuario);
         Usuario UpdateUsuario(int id, Usuario usuario);
         void DeleteUsuario(int id);
+
+        // NUEVO MÉTODO
+        Usuario Login(string email, string contrasenia);
     }
 }

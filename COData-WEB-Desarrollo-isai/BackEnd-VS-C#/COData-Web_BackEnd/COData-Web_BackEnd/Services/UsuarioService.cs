@@ -8,12 +8,44 @@ namespace COData_Web_BackEnd.Services
     public class UsuarioService : IUsuarioService
     {
         private readonly string _connectionString;
-
+        
         public UsuarioService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
+        public Usuario Login(string email, string contrasenia)
+        {
+            Usuario usuario = null;
+            
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            // Asumimos que crearás un SP llamado 'sp_Usuario_Login'
+            using SqlCommand cmd = new SqlCommand("sp_Usuario_Login", conn);
 
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Email", email);
+            cmd.Parameters.AddWithValue("@Contraseña", contrasenia);
+            cmd.Parameters.AddWithValue("@teléfono", (object)usuario.Teléfono ?? DBNull.Value);
+
+            conn.Open();
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                usuario = new Usuario
+                {
+                    UsuarioId = Convert.ToInt32(reader["UsuarioId"]),
+                    Nombre = reader["Nombre"].ToString(),
+                    Email = reader["Email"].ToString(),
+                    // No devolvemos la contraseña al front por seguridad
+                    FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
+                    
+
+                };
+            }
+
+            return usuario;
+        }
         public List<Usuario> GetAllUsuarios()
         {
             var lista = new List<Usuario>();
@@ -74,14 +106,13 @@ namespace COData_Web_BackEnd.Services
         public Usuario CreateUsuario(Usuario usuario)
         {
             using SqlConnection conn = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_Usuario_Insertar", conn); // Asegúrate que sea el nombre de tu SP
+            using SqlCommand cmd = new SqlCommand("sp_Usuario_Insertar", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            // Asumiendo que tu modelo 'Usuario' tiene estas propiedades:
-            cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
-            cmd.Parameters.AddWithValue("@email", usuario.Email);
-            //cmd.Parameters.AddWithValue("@contraseña", usuario.Us_Contraseña);
-            // Agrega aquí todos los parámetros que necesite tu procedimiento almacenado
+            cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Email", usuario.Email ?? (object)DBNull.Value);
+            // Asegúrate de usar la propiedad real del modelo: 'Contraseña'
+            cmd.Parameters.AddWithValue("@Contraseña", usuario.Contraseña ?? (object)DBNull.Value);
 
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -119,4 +150,5 @@ namespace COData_Web_BackEnd.Services
             cmd.ExecuteNonQuery();
         }
     }
+
 }
