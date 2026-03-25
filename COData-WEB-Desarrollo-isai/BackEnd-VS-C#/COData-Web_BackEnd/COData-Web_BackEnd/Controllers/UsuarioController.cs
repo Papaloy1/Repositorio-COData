@@ -31,11 +31,26 @@ namespace COData_Web_BackEnd.Controllers
             return Ok(usuario);
         }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] Usuario usuario)
+        [HttpPost("Registro")]
+        public IActionResult Registro([FromBody] Usuario usuario)
         {
-            var nuevo = _usuarioService.CreateUsuario(usuario);
+            var nuevo = _usuarioService.Registro(usuario);
+            if (nuevo == null)
+            {
+                return BadRequest("El usuario ya existe");
+            }
             return Ok(nuevo);
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        {
+            var usuario = _usuarioService.Login(loginRequest.Email, loginRequest.Password);
+            if (usuario == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(usuario);
         }
 
         [HttpPut("{id}")]
@@ -44,7 +59,6 @@ namespace COData_Web_BackEnd.Controllers
             var actualizado = _usuarioService.UpdateUsuario(id, usuario);
             return Ok(actualizado);
         }
-
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

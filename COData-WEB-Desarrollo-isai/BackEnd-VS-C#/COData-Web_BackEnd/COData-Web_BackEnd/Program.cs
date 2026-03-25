@@ -1,11 +1,13 @@
+using COData_Web_BackEnd.Models;
 using COData_Web_BackEnd.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//--COnfiguración de Clientes HTTP--//
+//--COnfiguraciï¿½n de Clientes HTTP--//
 builder.Services.AddHttpClient("OSMClient", client =>
 {
     // OSM requiere un User-Agent identificable para evitar bloqueos
@@ -22,6 +24,7 @@ builder.Services.AddScoped<IHistorialReportesService, HistorialReportesService>(
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<IReportesService, ReportesService>();
 builder.Services.AddScoped<IUbicacionesServices, UbicacionesService>();
+builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 
 // Agregar CORS antes de builder.Build()
 builder.Services.AddCors(options =>

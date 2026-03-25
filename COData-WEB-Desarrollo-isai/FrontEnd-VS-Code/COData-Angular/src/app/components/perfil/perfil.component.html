@@ -1,249 +1,111 @@
-<div class="perfil-container">
-  <!-- Header -->
-  <div class="perfil-header">
-    <h1>Mi Perfil</h1>
-    <p class="subtitle">Manage your profile information and settings</p>
+<div class="h-screen bg-gray-50 p-8 md:p-12 overflow-y-auto ml-64">
+  
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="text-3xl font-bold text-gray-950 flex items-center gap-3">
+      <i class="fa-solid fa-user-gear text-[#8B1538]"></i>
+      Ajustes de mi Cuenta
+    </h1>
+    <div class="flex items-center gap-2">
+      <p class="text-sm font-medium text-gray-500">Última conexión: Hace 10 min</p>
+    </div>
   </div>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="loading-spinner">
-    <div class="spinner"></div>
-    <p>Loading profile...</p>
-  </div>
-
-  <!-- Success Message -->
-  <div *ngIf="submitSuccess" class="alert alert-success">
-    <span class="alert-icon">✓</span>
-    Your profile has been updated successfully!
-  </div>
-
-  <!-- Error Message -->
-  <div *ngIf="submitError" class="alert alert-danger">
-    <span class="alert-icon">✕</span>
-    {{ submitError }}
-  </div>
-
-  <!-- Profile Content -->
-  <div *ngIf="!isLoading && usuario" class="perfil-content">
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
     
-    <!-- View Mode -->
-    <div *ngIf="!isEditing" class="profile-view">
-      <!-- Avatar Section -->
-      <div class="avatar-section">
-        <div class="avatar-container">
-          <div class="avatar-placeholder" 
-               [style.backgroundColor]="'#960e53'"
-               [title]="usuario.nombre">
-            {{ usuario.nombre.charAt(0).toUpperCase() }}
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden xl:col-span-1">
+      <div class="h-32 bg-gradient-to-r from-[#8B1538] via-[#a01e44] to-[#8B1538]"></div>
+      
+      <div class="px-6 pb-8 text-center -mt-16">
+        <div class="w-32 h-32 bg-white rounded-full p-1.5 shadow-2xl mx-auto mb-5">
+          <div class="w-full h-full bg-[#8B1538] rounded-full flex items-center justify-center text-5xl font-extrabold text-white">
+            U
           </div>
         </div>
-        <div class="user-info">
-          <h2>{{ usuario.nombre }}</h2>
-          <p class="email">{{ usuario.email }}</p>
-          <p class="member-since">
-            Member since {{ usuario.fechaRegistro | date: 'longDate' }}
-          </p>
+        
+        <h2 class="text-2xl font-bold text-gray-900">{{ usuarioNombre }}</h2>
+        <p class="text-sm font-medium text-gray-500 mb-6">Ciudadano de COData</p>
+        
+        <div class="flex items-center justify-center gap-3 mb-8">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Cuenta Verificada
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+            <i class="fa-solid fa-file-invoice"></i> {{ reportesTotales }} Reportes
+          </span>
         </div>
-      </div>
 
-      <!-- User Details -->
-      <div class="details-section">
-        <div class="detail-item">
-          <label>Full Name</label>
-          <p>{{ usuario.nombre }}</p>
-        </div>
-        <div class="detail-item">
-          <label>Email</label>
-          <p>{{ usuario.email }}</p>
-        </div>
-        <div class="detail-item">
-          <label>Account Created</label>
-          <p>{{ usuario.fechaRegistro | date: 'medium' }}</p>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button type="button" class="btn btn-primary" (click)="toggleEditMode()">
-          Edit Profile
-        </button>
-        <button type="button" class="btn btn-secondary">
-          Change Password
+        <button class="w-full flex items-center justify-center gap-2.5 px-6 py-3 border-2 border-[#8B1538] text-[#8B1538] rounded-2xl font-semibold hover:bg-[#8B1538]/5 transition-colors">
+          <i class="fa-solid fa-camera"></i>
+          Cambiar mi foto
         </button>
       </div>
     </div>
 
-    <!-- Edit Mode -->
-    <div *ngIf="isEditing" class="profile-edit">
-      <form [formGroup]="profileForm" (ngSubmit)="submitForm()">
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 xl:col-span-2">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h3 class="text-2xl font-bold text-gray-900">Datos Personales</h3>
+          <p class="text-gray-500 font-medium mt-1">Mantén tu información actualizada para un mejor seguimiento.</p>
+        </div>
+        <button class="flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+          <i class="fa-solid fa-lock"></i>
+          Cambiar Contraseña
+        </button>
+      </div>
+
+      <div *ngIf="savedSuccess" class="mb-8 bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-2xl"></i>
+        <p class="font-semibold">¡Tus datos han sido actualizados con éxito!</p>
+      </div>
+
+      <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" class="space-y-6">
         
-        <!-- Avatar Upload -->
-        <div class="form-section">
-          <h3>Profile Picture</h3>
-          <div class="avatar-upload">
-            <div class="avatar-preview">
-              <div class="avatar-display" 
-                   [style.backgroundImage]="'url(' + (avatarPreview || '') + ')'"
-                   *ngIf="avatarPreview">
-              </div>
-              <div class="avatar-placeholder" 
-                   [style.backgroundColor]="'#960e53'"
-                   *ngIf="!avatarPreview">
-                {{ usuario.nombre.charAt(0).toUpperCase() }}
-              </div>
-            </div>
-            <div class="upload-controls">
-              <label for="avatar-input" class="btn btn-secondary btn-sm">
-                Choose Image
-              </label>
-              <input type="file" 
-                     id="avatar-input" 
-                     accept="image/*" 
-                     (change)="onAvatarSelected($event)"
-                     style="display: none;">
-              <p class="help-text">
-                Formats: JPG, PNG, GIF, WebP (Max: 5MB)
-              </p>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="p-nombre" class="block text-sm font-medium text-gray-700 mb-2">Nombre(s)</label>
+            <input id="p-nombre" type="text" formControlName="nombre" placeholder="Juan Carlos"
+                   class="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#8B1538] focus:border-transparent outline-none transition-all" />
+          </div>
+          <div>
+            <label for="p-apellido" class="block text-sm font-medium text-gray-700 mb-2">Apellido(s)</label>
+            <input id="p-apellido" type="text" formControlName="apellido" placeholder="Pérez"
+                   class="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#8B1538] focus:border-transparent outline-none transition-all" />
           </div>
         </div>
 
-        <!-- Personal Information Section -->
-        <div class="form-section">
-          <h3>Personal Information</h3>
-          
-          <!-- Full Name -->
-          <div class="form-group">
-            <label for="nombre" class="form-label">
-              Full Name
-              <span class="required">*</span>
-            </label>
-            <input type="text" 
-                   id="nombre" 
-                   class="form-control" 
-                   formControlName="nombre"
-                   [class.is-invalid]="hasError('nombre')"
-                   placeholder="Enter your full name">
-            <div class="error-message" *ngIf="hasError('nombre')">
-              {{ getErrorMessage('nombre') }}
-            </div>
-          </div>
+        <div>
+          <label for="p-email" class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico (Principal)</label>
+          <input id="p-email" type="email" formControlName="email" placeholder="usuario@codata.com"
+                 class="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#8B1538] focus:border-transparent outline-none transition-all" />
+        </div>
 
-          <!-- Email -->
-          <div class="form-group">
-            <label for="email" class="form-label">
-              Email Address
-              <span class="required">*</span>
-            </label>
-            <input type="email" 
-                   id="email" 
-                   class="form-control" 
-                   formControlName="email"
-                   [class.is-invalid]="hasError('email')"
-                   placeholder="Enter your email">
-            <div class="error-message" *ngIf="hasError('email')">
-              {{ getErrorMessage('email') }}
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3">
+          <div>
+            <label for="p-telefono" class="block text-sm font-medium text-gray-700 mb-2">Teléfono de contacto</label>
+            <input id="p-telefono" type="tel" formControlName="teléfono" placeholder="10 dígitos"
+                   class="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#8B1538] focus:border-transparent outline-none transition-all" />
           </div>
-
-          <!-- Phone (Optional - add to your form if needed) -->
-          <div class="form-group">
-            <label for="teléfono" class="form-label">
-              Phone Number (Optional)
-            </label>
-            <input type="tel" 
-                   id="teléfono" 
-                   class="form-control" 
-                   formControlName="teléfono"
-                   [class.is-invalid]="hasError('teléfono')"
-                   placeholder="Enter your phone number">
-            <div class="error-message" *ngIf="hasError('teléfono')">
-              {{ getErrorMessage('teléfono') }}
-            </div>
-            <small class="help-text">Format: 7-15 digits</small>
-          </div>
-
-          <!-- Role (Read-only) -->
-          <div class="form-group">
-            <label for="rol" class="form-label">Role</label>
-            <input type="text" 
-                   id="rol" 
-                   class="form-control" 
-                   formControlName="rol"
-                   readonly>
-          </div>
-
-          <!-- Member Since (Read-only) -->
-          <div class="form-group">
-            <label for="fechaRegistro" class="form-label">Member Since</label>
-            <input type="text" 
-                   id="fechaRegistro" 
-                   class="form-control" 
-                   formControlName="fechaRegistro"
-                   readonly>
+          <div>
+            <label for="p-ubicacion" class="block text-sm font-medium text-gray-700 mb-2">Ubicación / Ciudad</label>
+            <input id="p-ubicacion" type="text" placeholder="Cd. Obregón"
+                   class="w-full px-5 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#8B1538] focus:border-transparent outline-none transition-all" />
           </div>
         </div>
 
-        <!-- Security Section -->
-        <div class="form-section">
-          <h3>Change Password</h3>
-          <p class="section-help">Leave blank if you don't want to change your password</p>
-          
-          <!-- New Password -->
-          <div class="form-group">
-            <label for="contraseña" class="form-label">
-              New Password
-            </label>
-            <input type="password" 
-                   id="contraseña" 
-                   class="form-control" 
-                   formControlName="contraseña"
-                   [class.is-invalid]="hasError('contraseña')"
-                   placeholder="Leave blank to keep current password">
-            <div class="error-message" *ngIf="hasError('contraseña')">
-              {{ getErrorMessage('contraseña') }}
-            </div>
-            <small class="help-text">Minimum 6 characters</small>
-          </div>
-
-          <!-- Confirm Password -->
-          <div class="form-group">
-            <label for="confirmarContraseña" class="form-label">
-              Confirm New Password
-            </label>
-            <input type="password" 
-                   id="confirmarContraseña" 
-                   class="form-control" 
-                   formControlName="confirmarContraseña"
-                   [class.is-invalid]="hasError('confirmarContraseña')"
-                   placeholder="Re-enter your password">
-            <div class="error-message" *ngIf="hasError('confirmarContraseña')">
-              {{ getErrorMessage('confirmarContraseña') }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <button type="submit" 
-                  class="btn btn-primary" 
-                  [disabled]="profileForm.invalid || isLoading">
-            <span *ngIf="!isLoading">Save Changes</span>
-            <span *ngIf="isLoading">Saving...</span>
-          </button>
-          <button type="button" 
-                  class="btn btn-secondary" 
-                  (click)="cancelEditing()"
-                  [disabled]="isLoading">
-            Cancel
+        <div class="pt-8 border-t border-gray-100 flex justify-end">
+          <button type="submit" [disabled]="perfilForm.invalid || isLoading"
+                  class="flex items-center gap-2.5 px-10 py-3.5 bg-[#8B1538] text-white rounded-2xl font-bold hover:bg-[#70112d] transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <i *ngIf="!isLoading" class="fa-solid fa-floppy-disk text-lg"></i>
+            <span *ngIf="isLoading" class="flex items-center gap-2">
+              <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{ isLoading ? 'Guardando...' : 'Guardar mis cambios' }}
           </button>
         </div>
       </form>
     </div>
-  </div>
-
-  <!-- No User Error -->
-  <div *ngIf="!isLoading && !usuario" class="no-user-container">
-    <p>No user profile found. Please log in.</p>
   </div>
 </div>

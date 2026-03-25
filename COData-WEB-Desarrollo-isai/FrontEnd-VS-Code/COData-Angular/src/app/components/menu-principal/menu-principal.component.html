@@ -1,87 +1,41 @@
-<header class="header">
-  <div class="header-container">
-    <!-- Logo/Brand -->
-    <div class="brand">
-      <i class="fa-solid fa-map-pin"></i>
-      <span>COData</span>
+<nav class="flex flex-col h-screen w-64 bg-[#8B1538] text-white shadow-xl fixed left-0 top-0">
+  <div class="p-6 border-b border-white/10 flex items-center gap-3">
+    <div class="w-10 h-10 bg-white rounded-lg p-1">
+      <img src="assets/logoCoData.png" alt="Logo" class="w-full h-full object-contain">
     </div>
-
-    <!-- Desktop Navigation -->
-    <nav class="nav-desktop">
-      <a
-        *ngFor="let item of menuItems"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: false }"
-        class="nav-item"
-        (click)="onNavigation()"
-      >
-        <i [class]="item.icon"></i>
-        <span>{{ item.label }}</span>
-      </a>
-    </nav>
-
-    <!-- Right side - User menu & Mobile toggle -->
-    <div class="header-actions">
-      <!-- User Menu -->
-      <div class="user-menu-container">
-        <button class="user-button" (click)="toggleUserMenu()" [class.open]="isUserMenuOpen">
-          <div class="user-avatar">
-            {{ getInitials() }}
-          </div>
-          <div class="user-info">
-            <span class="user-name">{{ usuarioActual?.nombre || 'Usuario' }}</span>
-            <span class="user-email">{{ usuarioActual?.email || 'No autenticado' }}</span>
-          </div>
-          <i class="fa-solid fa-chevron-down"></i>
-        </button>
-
-        <!-- User Dropdown Menu -->
-        <div *ngIf="isUserMenuOpen" class="user-dropdown">
-          <a routerLink="/perfil" class="dropdown-item" (click)="closeMenus()">
-            <i class="fa-solid fa-user"></i>
-            <span>Mi Perfil</span>
-          </a>
-          <a routerLink="/configuracion" class="dropdown-item" (click)="closeMenus()">
-            <i class="fa-solid fa-gear"></i>
-            <span>Configuración</span>
-          </a>
-          <hr class="dropdown-divider" />
-          <button class="dropdown-item logout" type="button" (click)="logout()">
-            <i class="fa-solid fa-sign-out-alt"></i>
-            <span>Cerrar Sesión</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Menu Toggle -->
-      <button
-        class="menu-toggle-mobile"
-        (click)="toggleMenu()"
-        [class.open]="isMenuOpen"
-        aria-label="Toggle menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
+    <span class="text-xl font-bold tracking-tight">COData</span>
   </div>
 
-  <!-- Mobile Navigation (Slide-out) -->
-  <div class="nav-mobile" [class.open]="isMenuOpen">
-    <nav class="mobile-nav-list">
-      <a
-        *ngFor="let item of menuItems"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: false }"
-        class="mobile-nav-item"
-        (click)="onNavigation()"
-      >
-        <i [class]="item.icon"></i>
-        <span>{{ item.label }}</span>
-      </a>
-    </nav>
+  <div class="flex-1 px-4 py-6 space-y-2">
+    <a routerLink="/mapa" routerLinkActive="bg-white/10" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors group">
+      <i class="fa-solid fa-map text-red-200 group-hover:text-white"></i>
+      <span class="font-medium">Mapa de Reportes</span>
+    </a>
+
+    <a routerLink="/reportes" routerLinkActive="bg-white/10" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors group">
+      <i class="fa-solid fa-file-invoice text-red-200 group-hover:text-white"></i>
+      <span class="font-medium">Mis Reportes</span>
+    </a>
+
+    <a routerLink="/seguimiento" routerLinkActive="bg-white/10" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors group">
+      <i class="fa-solid fa-chart-line text-red-200 group-hover:text-white"></i>
+      <span class="font-medium">Seguimiento</span>
+    </a>
+
+    <div class="pt-4 pb-2 px-4">
+      <p class="text-xs font-semibold text-red-300 uppercase tracking-wider">Configuración</p>
+    </div>
+
+    <a routerLink="/perfil" routerLinkActive="bg-white/10" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors group">
+      <i class="fa-solid fa-user text-red-200 group-hover:text-white"></i>
+      <span class="font-medium">Mi Perfil</span>
+    </a>
   </div>
-</header>
+
+  <div class="p-4 border-t border-white/10">
+    <button routerLink="/login" class="flex items-center gap-3 w-full px-4 py-3 text-red-100 hover:bg-red-700 rounded-lg transition-colors">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span class="font-medium">Cerrar Sesión</span>
+    </button>
+  </div>
+</nav>

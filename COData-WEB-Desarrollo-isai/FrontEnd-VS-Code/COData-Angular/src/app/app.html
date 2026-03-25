@@ -1,6 +1,8 @@
-<app-menu-principal></app-menu-principal>
+<div class="flex min-h-screen bg-gray-100">
+  <app-menu-principal *ngIf="!esPantallaAuth()"></app-menu-principal>
 
-<main class="main-content">
-  <router-outlet />
-</main>
-
+  <main class="flex-1 transition-all duration-300" 
+        [ngClass]="{'ml-64': !esPantallaAuth(), 'ml-0': esPantallaAuth()}">
+    <router-outlet></router-outlet>
+  </main>
+</div>

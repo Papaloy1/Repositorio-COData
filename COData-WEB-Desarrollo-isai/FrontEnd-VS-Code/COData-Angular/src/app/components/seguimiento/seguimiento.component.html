@@ -1,188 +1,96 @@
-<div class="seguimiento-container">
-  <!-- Header with Search -->
-  <div class="seguimiento-header">
-    <div class="header-content">
-      <h1 class="header-title">Seguimiento de Reportes</h1>
-      <form [formGroup]="searchForm" class="search-container">
-        <input
-          type="text"
-          formControlName="searchInput"
-          placeholder="Buscar reporte por título o descripción..."
-          class="search-input"
-        />
-        <i class="fas fa-magnifying-glass search-icon"></i>
-      </form>
-    </div>
+<div class="h-screen bg-gray-50 p-8 md:p-12 overflow-y-auto ml-64">
+  
+  <div class="mb-10">
+    <h1 class="text-3xl font-bold text-gray-950 flex items-center gap-3">
+      <i class="fa-solid fa-chart-pie text-[#8B1538]"></i>
+      Seguimiento de Incidencias
+    </h1>
+    <p class="text-gray-500 font-medium mt-1">Estadísticas generales y estado de tus reportes en tiempo real.</p>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Cargando reportes...</p>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error && !isLoading" class="error-state">
-    <i class="fas fa-exclamation-circle"></i>
-    <p>{{ error }}</p>
-    <button (click)="loadReportes()" class="btn-retry">Reintentar</button>
-  </div>
-
-  <!-- Main Content -->
-  <div *ngIf="!isLoading && !error" class="main-content">
-    <!-- Reports Count -->
-    <div class="reports-count">
-      <span>{{ filteredReportes.length }} reporte{{ filteredReportes.length !== 1 ? 's' : '' }} encontrado{{
-        filteredReportes.length !== 1 ? 's' : ''
-      }}</span>
-    </div>
-
-    <!-- Reports Cards Container -->
-    <div class="reports-container">
-      <!-- Empty State -->
-      <div *ngIf="filteredReportes.length === 0" class="empty-state">
-        <i class="fas fa-folder-open"></i>
-        <p>No se encontraron reportes</p>
-        <button (click)="scrollToTop(); searchForm.reset()" class="btn-primary">
-          Ver todos los reportes
-        </button>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div class="w-12 h-12 bg-red-50 text-[#8B1538] rounded-2xl flex items-center justify-center mb-4 text-xl">
+        <i class="fa-solid fa-list-check"></i>
       </div>
+      <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Reportes</p>
+      <h3 class="text-3xl font-black text-gray-900">42</h3>
+    </div>
 
-      <!-- Report Cards -->
-      <div *ngFor="let reporte of filteredReportes; let i = index" class="report-card" [style.border-left-color]="getStatusConfig(reporte.estado).borderColor">
-        <!-- Card Header -->
-        <div class="report-card-header">
-          <div class="report-id-status">
-            <span class="report-id">#{{ reporte.reporteId }}</span>
-            <span
-              class="status-dot"
-              [style.background-color]="getStatusConfig(reporte.estado).borderColor"
-              [title]="getStatusConfig(reporte.estado).label"
-            ></span>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+      </div>
+      <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">En Proceso</p>
+      <h3 class="text-3xl font-black text-gray-900">12</h3>
+    </div>
+
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div class="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+        <i class="fa-solid fa-check-double"></i>
+      </div>
+      <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Resueltos</p>
+      <h3 class="text-3xl font-black text-gray-900">28</h3>
+    </div>
+
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4 text-xl">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <p class="text-sm font-bold text-gray-500 uppercase tracking-wider">Tiempo Prom.</p>
+      <h3 class="text-3xl font-black text-gray-900">3d</h3>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+      <h3 class="text-xl font-bold text-gray-900 mb-6">Estado de Reportes</h3>
+      
+      <div class="space-y-6">
+        <div *ngFor="let item of estadisticas">
+          <div class="flex justify-between mb-2">
+            <span class="font-semibold text-gray-700">{{ item.categoria }}</span>
+            <span class="text-sm font-bold" [style.color]="item.color">{{ item.porcentaje }}%</span>
           </div>
-          <button
-            (click)="toggleCard(i)"
-            class="btn-toggle"
-            [attr.aria-label]="isCardExpanded(i) ? 'Contraer' : 'Expandir'"
-          >
-            <i class="fas" [class]="isCardExpanded(i) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-          </button>
-        </div>
-
-        <!-- Report Title -->
-        <h3 class="report-title">{{ reporte.titulo }}</h3>
-
-        <!-- Report Meta Info (Always Visible) -->
-        <div class="report-meta">
-          <div class="meta-item">
-            <i class="fas fa-calendar-days"></i>
-            <span>{{ getDurationSinceCreation(reporte.fecha_Creacion) }}</span>
+          <div class="w-full bg-gray-100 rounded-full h-3">
+            <div class="h-3 rounded-full transition-all duration-1000" 
+                 [style.width.%]="item.porcentaje" 
+                 [style.backgroundColor]="item.color"></div>
           </div>
-          <div class="meta-item">
-            <i class="fas fa-clock"></i>
-            <span>{{ reporte.fecha_Creacion | date: 'short' }}</span>
-          </div>
-        </div>
-
-        <!-- Status Badge (Expandable) -->
-        <div *ngIf="isCardExpanded(i)" class="report-status-badge">
-          <span
-            class="badge"
-            [style.background-color]="getStatusConfig(reporte.estado).color"
-            [style.border-left]="'4px solid ' + getStatusConfig(reporte.estado).borderColor"
-          >
-            {{ getStatusConfig(reporte.estado).label }}
-          </span>
-        </div>
-
-        <!-- Report Details (Expandable) -->
-        <div *ngIf="isCardExpanded(i)" class="report-details">
-          <!-- Description -->
-          <div class="detail-section">
-            <h4 class="detail-title">Descripción</h4>
-            <p class="detail-text">{{ reporte.descripcion }}</p>
-          </div>
-
-          <!-- Additional Details Grid -->
-          <div class="details-grid">
-            <!-- Priority -->
-            <div class="detail-item">
-              <span class="detail-label">Prioridad</span>
-              <span
-                class="priority-badge"
-                [style.background-color]="getPriorityColor(reporte.prioridad)"
-              >
-                {{ getPriorityLabel(reporte.prioridad) }}
-              </span>
-            </div>
-
-            <!-- Category -->
-            <div class="detail-item">
-              <span class="detail-label">Categoría</span>
-              <span class="detail-value">Categoría {{ reporte.categoriaId }}</span>
-            </div>
-
-            <!-- Location -->
-            <div class="detail-item">
-              <span class="detail-label">Ubicación</span>
-              <span class="detail-value">Ubicación {{ reporte.ubicacionId }}</span>
-            </div>
-
-            <!-- User ID -->
-            <div class="detail-item">
-              <span class="detail-label">Usuario ID</span>
-              <span class="detail-value">{{ reporte.usuarioId }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Report Actions (Expandable) -->
-        <div *ngIf="isCardExpanded(i)" class="report-actions">
-          <button (click)="updateReport(reporte.reporteId)" class="btn btn-primary">
-            <i class="fas fa-edit"></i>
-            Actualizar
-          </button>
-          <button (click)="viewOnMap(reporte.reporteId)" class="btn btn-secondary">
-            <i class="fas fa-map-location-dot"></i>
-            Ver en Mapa
-          </button>
-          <button (click)="deleteReport(reporte.reporteId)" class="btn btn-danger">
-            <i class="fas fa-trash"></i>
-            Eliminar
-          </button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Navigation Bar -->
-  <nav class="nav-bar">
-    <div class="nav-items">
-      <a href="/principal" class="nav-item" title="Principal">
-        <i class="fas fa-house"></i>
-        <span>Principal</span>
-      </a>
-      <a href="/seguimiento" class="nav-item active" title="Seguimiento">
-        <i class="fas fa-chart-line"></i>
-        <span>Seguimiento</span>
-      </a>
-      <a href="/galeria" class="nav-item" title="Galería">
-        <i class="fas fa-camera"></i>
-        <span>Galería</span>
-      </a>
-      <a href="/mapa" class="nav-item" title="Mapa">
-        <i class="fas fa-map-location-dot"></i>
-        <span>Mapa</span>
-      </a>
-      <a href="/notificaciones" class="nav-item" title="Notificaciones">
-        <i class="fas fa-bell"></i>
-        <span>Notificaciones</span>
-        <span class="badge-count">3</span>
-      </a>
-      <a href="/perfil" class="nav-item" title="Perfil">
-        <i class="fas fa-user"></i>
-        <span>Perfil</span>
-      </a>
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+      <h3 class="text-xl font-bold text-gray-900 mb-6">Actividad Reciente</h3>
+      
+      <div class="flow-root">
+        <ul role="list" class="-mb-8">
+          <li *ngFor="let act of actividades; let last = last">
+            <div class="relative pb-8">
+              <span *ngIf="!last" class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+              <div class="relative flex space-x-3">
+                <div>
+                  <span [class]="act.bgIcon" class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white">
+                    <i [class]="act.icon" class="text-white text-xs"></i>
+                  </span>
+                </div>
+                <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                  <div>
+                    <p class="text-sm text-gray-500">{{ act.mensaje }} <b class="font-bold text-gray-900">{{ act.id }}</b></p>
+                  </div>
+                  <div class="whitespace-nowrap text-right text-xs text-gray-400">
+                    <time>{{ act.tiempo }}</time>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-  </nav>
+
+  </div>
 </div>

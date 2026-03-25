@@ -2,9 +2,9 @@ export interface Usuario {
   usuarioId: number;
   nombre: string;
   email: string;
-  contraseña: string;
+  contrasenia: string; // <-- CAMBIADO: De 'contraseña' a 'contrasenia'
   fechaRegistro: Date;
   teléfono?: string;
   rol?: string;
-  avatar?: string; // Base64 or URL to profile picture
+  avatar?: string;
 }

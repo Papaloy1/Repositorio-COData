@@ -1,25 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
-import { Usuario } from '../../models';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  // Agregamos RouterLink para que el botón de "Regístrate aquí" funcione
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], 
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  registerForm!: FormGroup;
-  isSignUp = false;
   isLoadingLogin = false;
-  isLoadingRegister = false;
   loginError: string | null = null;
-  registerError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -30,25 +26,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      contraseña: ['', [Validators.required, Validators.minLength(6)]],
-    });
-
-    // Register Form
-    this.registerForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(2)]],
-      apellido: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      contraseña: ['', [Validators.required, Validators.minLength(6)]],
+      // Cambiamos 'contraseña' por 'contrasena' (sin la ñ)
+      contrasena: ['', [Validators.required, Validators.minLength(6)]], 
     });
   }
 
-  toggleForm(isSignUp: boolean): void {
-    this.isSignUp = isSignUp;
-    this.loginError = null;
-    this.registerError = null;
-  }
-
-  onLogin(): void {
+ onLogin(): void {
     if (this.loginForm.invalid) {
       return;
     }
@@ -56,63 +39,28 @@ export class LoginComponent implements OnInit {
     this.isLoadingLogin = true;
     this.loginError = null;
 
+    // Preparamos los datos tal como los espera tu backend (LoginRequest)
+    // Nota: A veces C# mapea "contraseña" diferente por la "ñ", lo enviaremos como "contrasenia" también por si acaso.
+   // Preparamos los datos asegurándonos de usar exactamente el nombre del control
     const loginData = {
       email: this.loginForm.get('email')?.value,
-      contraseña: this.loginForm.get('contraseña')?.value,
+      // Usamos 'contrasena' que es como lo llamaste arriba en tu fb.group
+      contrasenia: this.loginForm.get('contrasena')?.value, 
     };
 
-    // TODO: Call actual login endpoint
-    // this.apiService.login(loginData).subscribe({
-    //   next: (response) => {
-    //     localStorage.setItem('authToken', response.token);
-    //     localStorage.setItem('usuarioActual', JSON.stringify(response.usuario));
-    //     this.router.navigate(['/mapa']);
-    //   },
-    //   error: (error) => {
-    //     this.isLoadingLogin = false;
-    //     this.loginError = error.error?.message || 'Email o contraseña incorrectos.';
-    //   },
-    // });
-
-    // Temporary: Simulate login delay
-    setTimeout(() => {
-      this.isLoadingLogin = false;
-      this.loginError = 'Endpoint de login aún no implementado en backend.';
-    }, 1500);
-  }
-
-  onRegister(): void {
-    if (this.registerForm.invalid) {
-      return;
-    }
-
-    this.isLoadingRegister = true;
-    this.registerError = null;
-
-    const newUser: Usuario = {
-      usuarioId: 0,
-      nombre: `${this.registerForm.get('nombre')?.value} ${this.registerForm.get('apellido')?.value}`,
-      email: this.registerForm.get('email')?.value,
-      contraseña: this.registerForm.get('contraseña')?.value,
-      fechaRegistro: new Date(),
-    };
-
-    this.apiService.crearUsuario(newUser).subscribe({
+    // Llamamos al servicio real en lugar del setTimeout
+    this.apiService.login(loginData).subscribe({
       next: (response) => {
-        this.isLoadingRegister = false;
-
-        // Store user in localStorage
+        this.isLoadingLogin = false;
+        // Guardamos los datos recibidos del backend
         localStorage.setItem('usuarioActual', JSON.stringify(response));
-
-        // Clear form and redirect to mapa
-        this.registerForm.reset();
         this.router.navigate(['/mapa']);
       },
       error: (error) => {
-        this.isLoadingRegister = false;
-        this.registerError =
-          error.error?.message || 'Error en el registro. Intenta de nuevo.';
-        console.error('Register error:', error);
+        this.isLoadingLogin = false;
+        // Mostramos el mensaje de error que venga del backend (ej. "Usuario o contraseña incorrectos")
+        this.loginError = error.error?.message || 'Error al iniciar sesión. Verifica tus credenciales.';
+        console.error('Login error:', error);
       },
     });
   }
