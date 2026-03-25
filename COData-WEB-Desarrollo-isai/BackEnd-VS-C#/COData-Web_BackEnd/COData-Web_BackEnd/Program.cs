@@ -40,14 +40,16 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Usar CORS
-app.UseCors("AllowAngular");
+// ==========================================
+// ELIMINAMOS app.UseCors("AllowAngular"); DE AQUÍ
+// ==========================================
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -59,8 +61,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// 1. PRIMERO EL ENRUTAMIENTO
 app.UseRouting();
 
+// 2. AQUÍ DEBE IR EL CORS (Justo en medio de Routing y Authorization)
+app.UseCors("AllowAngular");
+
+// 3. DESPUÉS LA AUTORIZACIÓN
 app.UseAuthorization();
 
 app.MapControllerRoute(

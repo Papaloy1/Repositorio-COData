@@ -65,5 +65,33 @@ namespace COData_Web_BackEnd.Controllers
             _usuarioService.DeleteUsuario(id);
             return Ok();
         }
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest login)
+        {
+            // --- AGREGA ESTAS DOS LÍNEAS PARA DEPURAR ---
+            Console.WriteLine($"INTENTO DE LOGIN - Correo: {login?.Email}");
+            Console.WriteLine($"INTENTO DE LOGIN - Contraseña: {login?.Contrasenia}");
+            // --------------------------------------------
+
+            if (login == null || string.IsNullOrEmpty(login.Email))
+            {
+                return BadRequest(new { message = "Datos de acceso incompletos" });
+            }
+
+            var usuario = _usuarioService.Login(login.Email, login.Contrasenia);
+
+            if (usuario == null)
+            {
+                return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
+            }
+
+            return Ok(new
+            {
+                id = usuario.UsuarioId,
+                nombre = usuario.Nombre,
+                email = usuario.Email,
+                fecha = usuario.FechaRegistro
+            });
+        }
+        }
     }
-}
