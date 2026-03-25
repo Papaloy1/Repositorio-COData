@@ -21,10 +21,9 @@ namespace COData_Web_BackEnd.Services
             using SqlCommand cmd = new SqlCommand("sp_Usuario_Login", conn);
 
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@Email", email);
-            cmd.Parameters.AddWithValue("@Contraseña", contrasenia);
-
-            // ELIMINAMOS LA LÍNEA DEL TELÉFONO QUE HACÍA EXPLOTAR EL CÓDIGO
+            // Quitamos la 'ñ' al parámetro
+            cmd.Parameters.AddWithValue("@email", email);
+            cmd.Parameters.AddWithValue("@contrasenia", contrasenia);
 
             conn.Open();
 
@@ -63,7 +62,7 @@ namespace COData_Web_BackEnd.Services
                     UsuarioId = Convert.ToInt32(reader["UsuarioId"]),
                     Nombre = reader["Nombre"].ToString(),
                     Email = reader["Email"].ToString(),
-                    Contraseña = reader["Contraseña"].ToString(),
+                    Contrasenia = reader["Contraseña"].ToString(),
                     FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
                 });
             }
@@ -92,7 +91,7 @@ namespace COData_Web_BackEnd.Services
                     UsuarioId = Convert.ToInt32(reader["UsuarioId"]),
                     Nombre = reader["Nombre"].ToString(),
                     Email = reader["Email"].ToString(),
-                    Contraseña = reader["Contraseña"].ToString(),
+                    Contrasenia = reader["Contrasenia"].ToString(),
                     FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"])
                 };
             }
@@ -106,14 +105,11 @@ namespace COData_Web_BackEnd.Services
             using SqlCommand cmd = new SqlCommand("sp_Usuario_Insertar", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Email", usuario.Email ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@Contraseña", usuario.Contraseña ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@teléfono", usuario.Teléfono ?? (object)DBNull.Value);
-
-            // Opcional: Si tu procedimiento sp_Usuario_Insertar y tu modelo exigen el teléfono,
-            // descomenta la siguiente línea (asegurándote que 'Teléfono' exista en tu modelo C#).
-            // cmd.Parameters.AddWithValue("@teléfono", usuario.Teléfono ?? (object)DBNull.Value);
+            // Usamos los parámetros exactos sin acentos ni 'ñ'
+            cmd.Parameters.AddWithValue("@nombre", usuario.Nombre ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@email", usuario.Email ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@contrasenia", usuario.Contrasenia ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@telefono", usuario.Teléfono ?? (object)DBNull.Value);
 
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -131,7 +127,7 @@ namespace COData_Web_BackEnd.Services
             cmd.Parameters.AddWithValue("@UsuarioId", id);
             cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
             cmd.Parameters.AddWithValue("@Email", usuario.Email);
-            cmd.Parameters.AddWithValue("@Contraseña", usuario.Contraseña);
+            cmd.Parameters.AddWithValue("@Contraseña", usuario.Contrasenia);
 
             conn.Open();
             cmd.ExecuteNonQuery();
